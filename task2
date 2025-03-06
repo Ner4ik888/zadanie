@@ -1,0 +1,41 @@
+import re
+
+def is_valid(expression):
+    open_brackets = expression.count('(')
+    close_brackets = expression.count(')')
+    return open_brackets == close_brackets
+
+def decode(expression):
+    while '(' in expression:
+        inner_start = expression.rfind('(')
+        inner_end = expression.find(')', inner_start)
+
+        if inner_start == -1 or inner_end == -1:
+            return "Ошибка: Некорректное выражение."
+
+        inner_expression = expression[inner_start + 1:inner_end]
+        
+        match = re.match(r'(\d+)(.*)', inner_expression)
+        if not match:
+            return "Ошибка: Некорректный формат выражения внутри скобок."
+
+        count = int(match.group(1))
+        code = match.group(2)
+
+        replacement = code * count
+        expression = expression[:inner_start] + replacement + expression[inner_end + 1:]
+
+    return expression
+
+while True:
+    expression = input("Введите сжатую команду: ")
+
+    if not is_valid(expression):
+        print("Ошибка: Некорректное скобочное выражение. Пожалуйста, введите данные повторно.")
+    else:
+        result = decode(expression)
+        if "Ошибка" in result:
+            print(result)
+        else:
+            print(result)
+            break
